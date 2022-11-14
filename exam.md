@@ -30,7 +30,7 @@ In answering the question use the following format: `<processor-number>: <local-
 | 5: msg-receive (from 2) | 5: msg-send (to 3)      |                         |
 |                         |                         | 6: msg-receive (from 2) |
 
-## 2. Lamport's M.E. Algorithm (10 points)
+## 2. Lamport's Mutual Exclusion Algorithm (10 points)
 
 https://en.wikipedia.org/wiki/Lamport%27s_distributed_mutual_exclusion_algorithm
 
@@ -99,14 +99,13 @@ You now need to access the Postgres database from the web service. What changes 
 
 The web servers will need a subcontract with the Postgres load balancer. The Postgres load balancer will need a corresponding subcontract.
 
-## 5. EJB (10 points)
+## 5. Entity Java Beans (10 points)
 
 It is circa 2002. Yelp and Google Reviews don’t exist yet. You’re a developer and a foodie. You decide to build a restaurant review website that has the following functionalities:
 
 1. Accept a restaurant name or a cuisine as input and display a list of restaurants with their ratings.
 1. If a user clicks on a restaurant, they will be shown the reviews for the restaurant.
 1. The user should be able to sort restaurants by distance from their location, and average review score.
-
 1. Allow a user to post a review about a restaurant and store it in the database, along with some keywords (e.g., cuisine, ambience, etc.), which may or may not explicitly be provided by the user.
 
 Now you realize that restaurant searches are hyper-local, so you only need to show the user the restaurants which are within a 15-mile radius. So, you decide to use the user’s GPS location to filter results.
@@ -151,7 +150,10 @@ How would you optimize for latency for concurrent requests from users in the sam
 
 ---
 
-// TODO
+* I am limiting my answer to optimizing EJB. There are plenty of well-known general techniques for reducing latency in a web service that I am considering as out-of-scope for this answer.
+* Stateless session beans could be used to exploit database connection pooling. The bean could be modified to add a simple key/value cache.
+* Stateful session beans would be unlikely to be very useful. No part of the application necessitates client state.
+
 
 ### 5.3 (2 points)
 
@@ -177,19 +179,21 @@ Java RMI evolved from the Spring Subcontract mechanism. Name one similarity and 
 
 ---
 
-Method invocation from the client is impervious to the location of the server
+Similarity: Both Java RMI and subcontract use the concept of a stub for communication between the client and the server.
 
-Subcontracts rely on IDL to create strong interface; whereas RMI uses Java objects via extending the object or using a remote object interface
+Difference: Subcontract is heaviliy tied to Spring's door mechanism, whereas Java RMI is not strongly tied to any one transport mechanism.
 
 ### 6.2 (2 points)
 
 Java allows object references to be passed as parameters during object invocation. What is the difference in parameter passing (when a local object reference is passed as a parameter) while invoking a remote object using Java RMI?
 
-// TODO
+---
+
+The local object has to be copied when invoking a remote object with the local object as a parameter. Changes to the copy of the local object by the remote server will not be propagated.
 
 # Lesson 7: Distributed Subsystems (46 points)
 
-## 7. GMS (16 points)
+## 7. Global Memory System (16 points)
 
 ### 7.1 (2 points)
 
@@ -263,7 +267,7 @@ What work would need to be done on each page eviction from a node.
 
 // TODO
 
-## 8. DSM (18 points)
+## 8. Distributed Shared Memory (18 points)
 
 ### 8.1 (2 points)
 
@@ -364,7 +368,7 @@ Treadmarks at Node N1?
 
 // TODO
 
-## 9. DFS (12 points)
+## 9. Distributed File Systems (12 points)
 
 Inspired by xFS, you and your classmate decide to implement a true distributed FS. In your implementation similar to xFS, the location of the files on the disks remain fixed (i.e., they are never migrated). However, you periodically assess the meta-data server activity on each node and redistribute the meta-data management to balance the load in the entire cluster. In your implementation you are using the same data structures as in the original xFS.
 

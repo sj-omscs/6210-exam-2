@@ -36,9 +36,13 @@ https://en.wikipedia.org/wiki/Lamport%27s_distributed_mutual_exclusion_algorithm
 
 https://drive.google.com/file/d/1HkVo68Ykq-zsA2pXVF_34NqCXaq4HHvV/view
 
+// TODO
+
 ## 3. Latency Reduction in RPC (9 points) (hidden)
 
 https://drive.google.com/file/d/18Oiq99TQYNg-D0h7Oyu9D9V2VEyxV-h0/view
+
+// TODO
 
 # Lesson 6: Distributed Objects and Middleware (26 points) 
 
@@ -61,7 +65,7 @@ List the subcontracts needed on the client machines.
 
 ---
 
-The clients will need a subcontract with the webserver load balancer and the Postgres load balancer. The webserver and Postgres load balancers will both need a subcontract to handle clients.
+The clients will need a subcontract with the webserver load balancer and the Postgres load balancer.
 
 #### 4.1b
 
@@ -69,7 +73,7 @@ List the subcontracts needed on the web server load balancer.
 
 ---
 
-The web server load balancer will need subcontracts with each of the three webservers. Each webserver will need a corresponding subcontract with the web server load balancer.
+The web server load balancer will need one subcontract for communication with the three webservers. This subcontract will need to be able to determine the CPU utilization of each web server and route a invocation to the web server with the lowest utilization. The subcontract will dynamically discover web servers on the network. The load balancer will also need a subcontract with the clients.
 
 #### 4.1c
 
@@ -77,7 +81,7 @@ List the subcontracts needed on the Postgres load balancer.
 
 ---
 
-The Postgres load balancer will need subcontracts with each of the three Postgres servers. Each Postgres server will need a corresponding subcontract with the Postgres load balancer.
+The Postgres load balancer will need one subcontract for communication with the three Postgres servers. The subcontract will perform round-robin distribution of requests, so it will need to maintain state to know which server to contact next. The subcontract will dynamically discover Postgres instances on the network. The load balancer will also need a subcontract with the clients.
 
 ### 4.2 (2 points)
 
@@ -85,7 +89,7 @@ You decide to beef up your web server with 2 more nodes. What changes will you n
 
 ---
 
-The web server load balancer will need two more subcontracts for each of the newly added web servers. The newly added web servers will need subcontracts for the web server load balancer.
+No change is needed. The client contacts the load balancers which dynamically discover their respective instances.
 
 ### 4.3 (2 points)
 
@@ -93,7 +97,7 @@ You now need to access the Postgres database from the web service. What changes 
 
 ---
 
-The five web servers will each need a subcontract with the Postgres load balancer. The Postgres load balancer will need a subcontract to handle web server requests.
+The web servers will need a subcontract with the Postgres load balancer. The Postgres load balancer will need a corresponding subcontract.
 
 ## 5. EJB (10 points)
 
@@ -102,6 +106,7 @@ It is circa 2002. Yelp and Google Reviews don’t exist yet. You’re a develope
 1. Accept a restaurant name or a cuisine as input and display a list of restaurants with their ratings.
 1. If a user clicks on a restaurant, they will be shown the reviews for the restaurant.
 1. The user should be able to sort restaurants by distance from their location, and average review score.
+
 1. Allow a user to post a review about a restaurant and store it in the database, along with some keywords (e.g., cuisine, ambience, etc.), which may or may not explicitly be provided by the user.
 
 Now you realize that restaurant searches are hyper-local, so you only need to show the user the restaurants which are within a 15-mile radius. So, you decide to use the user’s GPS location to filter results.
@@ -118,17 +123,51 @@ For the functionality that you need on the website, describe concisely what comp
 
 Presentation logic:
 
+* Interacts with the client
+* Controls (e.g. HTML, CSS) for searching, sorting, filtering
+* Controls for publishing reviews
+* Logic for rendering reviews and restaurants
+* On search the presentation logic will call the business logic with the desired searching, sorting, and filtering parameters
+* When posting a review the presentation logic will pass the review information to the business logic
+* GPS data is passed from the client to the business logic for additional filtering
+
 Business logic:
 
+* Validation of requests
+* Bridge between presentation logic and entity beans
+* Forwards searches from the presentation logic to entity beans
+* Could potentially perform searching, filtering, and sorting, but it would be more efficient to do this in the database
+* When posting reviews the business logic interacts with the entity beans to create a new database record to persist the review information. It may also perform any special logic to handle optional/missing fields
+
 Entity beans:
+
+* Interacts with a database to persist and query data such as restaurants and reviews
+* Provides mechanisms to search for restaurants and reviews based on some criteria
+* Acts as the bridge between the database and Java objects
 
 ### 5.2 (2 points)
 
 How would you optimize for latency for concurrent requests from users in the same location?
 
+---
+
+// TODO
+
 ### 5.3 (2 points)
 
 You decide to open shop in India, where there are 22 official languages. You realize that restricting yourself to English might be a problem. Where in this framework would you add the functionality to render content in different languages? Justify your answer (No points without justification).
+
+---
+
+All layers will need to support a string encoding format that supports India's 22 languages. Java uses UTF-8 by default. Let's assume that all layers were designed to support UTF-8, and that UTF-8 is a good fit for the languages we're displaying.
+
+* The presentation layer will need to be updated so that users can select their preferred language(s)
+  * The presentation layer could optionally be updated to automatically translate user-submitted text (e.g. reviews) with a technology like Google translate
+  * Otherwise we should provide a filter so that we only show reviews that the user can understand
+  * We may also want to allow restaurants to display which languages they speak, so that a customer knows they will be well served there
+* The business logic will need to support the new language filter
+* The entity beans will need to be updated to store our new languages fields, and expose methods for searching/filtering
+* The database schema will likewise need to be updated for the new fields
 
 ## 6. Java RMI (6 points)
 
@@ -136,9 +175,15 @@ You decide to open shop in India, where there are 22 official languages. You rea
 
 Java RMI evolved from the Spring Subcontract mechanism. Name one similarity and one difference in the implementation of the two systems.
 
+---
+
+// TODO
+
 ### 6.2 (2 points)
 
 Java allows object references to be passed as parameters during object invocation. What is the difference in parameter passing (when a local object reference is passed as a parameter) while invoking a remote object using Java RMI?
+
+// TODO
 
 # Lesson 7: Distributed Subsystems (46 points)
 

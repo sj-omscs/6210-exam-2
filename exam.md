@@ -10,7 +10,7 @@ A student has implemented a distributed algorithm using Lamport’s happened-bef
 |                           | 2: msg-receive (from ??) | 2: msg-send (to ??)      |
 |                           | 3: msg-receive (from ??) | 3: local event           |
 |                           | 4: msg-send (to ??)      | 4: local event           |
-| 5: msg-receipt (from ???) | 5: msg-send (to ??)      |                          |
+| 5: msg-receive (from ???) | 5: msg-send (to ??)      |                          |
 |                           |                          | 6: msg-receive (from ??) |
 
 Please help her by identifying who is the sender/receiver for each message (namely, the sender, receiver, and the logical timestamp associated with that event.
@@ -19,9 +19,26 @@ In answering the question use the following format: `<processor-number>: <local-
 
 (e.g., `P1: 20: msg-receive(P3)` would mean P1 received a message from P3 at local time 20)
 
+---
+
+| P1                      | P2                      | P3                      |
+|-------------------------|-------------------------|-------------------------|
+| 1: msg-send (to 2)      |                         | 1: local event          |
+|                         | 2: msg-receive (from 1) | 2: msg-send (to 2)      |
+|                         | 3: msg-receive (from 3) | 3: local event          |
+|                         | 4: msg-send (to 1)      | 4: local event          |
+| 5: msg-receive (from 2) | 5: msg-send (to 3)      |                         |
+|                         |                         | 6: msg-receive (from 2) |
+
 ## 2. Lamport's M.E. Algorithm (10 points)
 
+https://en.wikipedia.org/wiki/Lamport%27s_distributed_mutual_exclusion_algorithm
+
+https://drive.google.com/file/d/1HkVo68Ykq-zsA2pXVF_34NqCXaq4HHvV/view
+
 ## 3. Latency Reduction in RPC (9 points) (hidden)
+
+https://drive.google.com/file/d/18Oiq99TQYNg-D0h7Oyu9D9V2VEyxV-h0/view
 
 # Lesson 6: Distributed Objects and Middleware (26 points) 
 
@@ -29,28 +46,54 @@ In answering the question use the following format: `<processor-number>: <local-
 
 You are managing a subset of nodes in a cluster. You have chosen to use Spring as the network OS for the cluster. You must host the following services:
 
-1. A PostGRES database server which is replicated on 3 nodes
-1. A Web server on 3 nodes
-1. A Web-server-load-balancer that does ensures equitable CPU utilization on all the servers for the client requests.
-1. A PostGRES-load-balancer that does round-robin allocation of the servers for the client requests.
+1. A Postgres database server which is replicated on 3 nodes
+1. A web server on 3 nodes
+1. A web server load balancer that does ensures equitable CPU utilization on all the servers for the client requests.
+1. A Postgres load balancer that does round-robin allocation of the servers for the client requests.
 
-Each of the above servers and the load balancers are hosted on distinct nodes on the LAN. The clients are all on the same LAN and are expected to make requests to both the POSTGRES and Web service.
+Each of the above servers and the load balancers are hosted on distinct nodes on the LAN. The clients are all on the same LAN and are expected to make requests to both the Postgres and Web service.
 
 ### 4.1 (6 points)
 
-For the above deployment to work as envisioned above:
+#### 4.1a
 
-1. List the subcontracts needed on the client machines.
-1. List the subcontracts needed on the Web-server-load-balancer.
-1. List the subcontracts needed on the PostGRES-load-balancer.
+List the subcontracts needed on the client machines.
+
+---
+
+The clients will need a subcontract with the webserver load balancer and the Postgres load balancer. The webserver and Postgres load balancers will both need a subcontract to handle clients.
+
+#### 4.1b
+
+List the subcontracts needed on the web server load balancer.
+
+---
+
+The web server load balancer will need subcontracts with each of the three webservers. Each webserver will need a corresponding subcontract with the web server load balancer.
+
+#### 4.1c
+
+List the subcontracts needed on the Postgres load balancer.
+
+---
+
+The Postgres load balancer will need subcontracts with each of the three Postgres servers. Each Postgres server will need a corresponding subcontract with the Postgres load balancer.
 
 ### 4.2 (2 points)
 
 You decide to beef up your web server with 2 more nodes. What changes will you need to make to ensure that the client requests can utilize the two new nodes?
 
+---
+
+The web server load balancer will need two more subcontracts for each of the newly added web servers. The newly added web servers will need subcontracts for the web server load balancer.
+
 ### 4.3 (2 points)
 
-You now need to access the PostGRES database from the web service. What changes do you need to make to the system?
+You now need to access the Postgres database from the web service. What changes do you need to make to the system?
+
+---
+
+The five web servers will each need a subcontract with the Postgres load balancer. The Postgres load balancer will need a subcontract to handle web server requests.
 
 ## 5. EJB (10 points)
 
@@ -70,6 +113,14 @@ You decide to implement the system with the state of the art, i.e., EJB entity b
 ### 5.1 (6 points)
 
 For the functionality that you need on the website, describe concisely what components go into the presentation logic, business logic and the entity beans. 
+
+---
+
+Presentation logic:
+
+Business logic:
+
+Entity beans:
 
 ### 5.2 (2 points)
 

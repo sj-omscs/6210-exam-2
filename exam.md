@@ -30,19 +30,25 @@ In answering the question use the following format: `<processor-number>: <local-
 | 5: msg-receive (from 2) | 5: msg-send (to 3)      |                         |
 |                         |                         | 6: msg-receive (from 2) |
 
-## 2. Lamport's Mutual Exclusion Algorithm (10 points) (hidden?)
+## 2. Lamport's Mutual Exclusion Algorithm (10 points) (hidden)
 
-https://en.wikipedia.org/wiki/Lamport%27s_distributed_mutual_exclusion_algorithm
+Every process maintains a queue of pending requests for entering critical section in order. The queues are ordered by virtual time stamps derived from Lamport timestamps.
 
-https://drive.google.com/file/d/1HkVo68Ykq-zsA2pXVF_34NqCXaq4HHvV/view
+Requesting process
 
-// TODO
+1. Sending a request to every node.
+1. Waiting for replies from all other nodes.
+1. If own request is at the head of its queue and all replies have been received, enter critical section.
+1. Upon exiting the critical section, remove its request from the queue and send a release message to every process.
+
+Other processes
+
+1. After receiving a request, pushing the request in its own request queue (ordered by time stamps) and reply with a time stamp.
+1. After receiving release message, remove the corresponding request from its own request queue.
 
 ## 3. Latency Reduction in RPC (9 points) (hidden)
 
 https://drive.google.com/file/d/18Oiq99TQYNg-D0h7Oyu9D9V2VEyxV-h0/view
-
-// TODO
 
 # Lesson 6: Distributed Objects and Middleware (26 points) 
 
@@ -391,8 +397,7 @@ Unlock(L1);
 
 #### 8.5c (2 points)
 
-What would be the action carried out by Treadmarks at Node 1 before
-the critical section above is executed by N1?
+What would be the action carried out by Treadmarks at Node 1 before the critical section above is executed by N1?
 
 ---
 
@@ -440,4 +445,4 @@ What data structures do not change as a result of the load redistribution algori
 ---
 
 * File directories. The file -> index number mapping should not change for a file
-* Stripe gorup map because the files themselves are not moved.
+* Stripe group map because the files themselves are not moved.
